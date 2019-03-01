@@ -63,9 +63,20 @@ class DrawMap:
             for y in range(len(self.map.elevations)):
                 self.picture.putpixel((x, y), (self.map.get_intensity(x, y), self.map.get_intensity(x, y), self.map.get_intensity(x, y)))
         
-        self.picture.save('elevation_example.png')
-        
-        
+        # self.picture.save('elevation_example.png')
+
+
+class DrawLine:
+
+    def __init__(self, canvas):
+        self.canvas = canvas
+        self.draw = ImageDraw.Draw(self.canvas)
+
+    def draw_line(self):
+        """Drawing the line"""
+        self.draw.line([(0, 0), (50, 75)], fill='black')
+
+        self.draw.save('pic_with_line.png')
 
 
 
@@ -75,3 +86,5 @@ if __name__ == "__main__":
     small = Map('elevation_small.txt')
     example = DrawMap(small)
     example.draw()
+    line = DrawLine(example)
+    line.draw_line()
