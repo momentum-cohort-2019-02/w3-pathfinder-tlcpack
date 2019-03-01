@@ -1,4 +1,5 @@
 from PIL import ImageColor, ImageDraw, Image
+
 # # class notes: class ElevationMap:
 
 #     def __init__(self, filename):
@@ -54,15 +55,23 @@ class DrawMap:
 
     def __init__(self, map):
         self.map = map
-        self.picture = Image.new('RGBA', (len(self.map.elevations[0], len(self.map.elevations)))
+        self.picture = Image.new('RGBA', (len(self.map.elevations[0]), len(self.map.elevations)))
 
-    # def draw(self):
-    #     pass
+    def draw(self):
+        """Drawing the map"""
+        for x in range(len(self.map.elevations[0])):
+            for y in range(len(self.map.elevations)):
+                self.picture.putpixel((x, y), (self.map.get_intensity(x, y), self.map.get_intensity(x, y), self.map.get_intensity(x, y)))
+        
+        self.picture.save('elevation_example.png')
+        
+        
 
 
 
 if __name__ == "__main__":
 
     
-    small = Map(elevation_small.txt)
-    
+    small = Map('elevation_small.txt')
+    example = DrawMap(small)
+    example.draw()
