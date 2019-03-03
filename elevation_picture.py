@@ -71,6 +71,8 @@ class DrawMap:
 
         self.picture.save('elevation_draw_example.png')
 
+
+# couldn't get image to save with separate drawing class
 # class DrawLine:
 
 #     def __init__(self, canvas):
