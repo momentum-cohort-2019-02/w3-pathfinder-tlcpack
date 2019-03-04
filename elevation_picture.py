@@ -98,6 +98,7 @@ class Path:
     def draw_path(self):
         total_path = []
         x_path = [self.x_start]
+        y_path = [self.y_start]
         possible_y_path = [self.y_start, self.y_start - 1, self.y_start + 1]
 
         up_choice = abs(self.field.elevations[self.x_start + 1][possible_y_path[1]] - self.field.elevations[self.x_start][self.y_start])
@@ -109,14 +110,19 @@ class Path:
         down = diffs["down"]
         next_step = 0
 
-        if up < down and up < straight:
-            next_step = possible_y_path[1]
-        elif down < up and down < straight:
-            next_step = possible_y_path[2]
-        elif down == up and down < straight:
-            next step = possible_y_path[2] # ignoring instruction to randomly choose path, just picking the down path
-        else:
-            next_step = possible_y_path[0]
+        while x_path < len(self.field.elevations[0]) - 1: # why the '- 1' here?
+            if up < down and up < straight:
+                next_step = possible_y_path[1]
+            elif down < up and down < straight:
+                next_step = possible_y_path[2]
+            elif down == up and down < straight:
+                next step = possible_y_path[2] # ignoring instruction to randomly choose path, just picking the down path
+            else:
+                next_step = possible_y_path[0]
+            
+            x_path.append(x_path + 1)
+            y_path.append(next_step)
+            
 
 
 if __name__ == "__main__":
