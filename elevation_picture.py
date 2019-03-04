@@ -65,11 +65,11 @@ class DrawMap:
                 self.picture.putpixel((x, y), (self.map.get_intensity(x, y), self.map.get_intensity(x, y), self.map.get_intensity(x, y)))
         
         
-    def draw_line(self):
-        """Drawing the line"""
-        self.drawing.line([(20, 0), (100, 275)], fill='black')    
+    # def draw_line(self):
+    #     """Drawing the line"""
+    #     self.drawing.line([(20, 0), (100, 275)], fill='black')    
 
-        self.picture.save('elevation_draw_example.png')
+    #     self.picture.save('elevation_draw_example.png')
 
 
 # couldn't get image to save with separate drawing class
@@ -91,12 +91,13 @@ class Path:
         self.field = field
         self.x_start = x_start
         self.y_start = y_start
+        self.total_path = []
         self.picture = Image.new('RGBA', (len(self.field.elevations[0]), len(self.field.elevations))) 
         self.path = ImageDraw.Draw(self.picture)
         
 
-    def draw_path(self):
-        total_path = []
+    def determine_path(self):
+        
         x_path = [self.x_start]
         y_path = [self.y_start]
         possible_y_path = [self.y_start, self.y_start - 1, self.y_start + 1]
@@ -116,13 +117,20 @@ class Path:
             elif down < up and down < straight:
                 next_step = possible_y_path[2]
             elif down == up and down < straight:
-                next step = possible_y_path[2] # ignoring instruction to randomly choose path, just picking the down path
+                next_step = possible_y_path[2] # ignoring instruction to randomly choose path, just picking the down path
             else:
                 next_step = possible_y_path[0]
             
             x_path.append(x_path + 1)
             y_path.append(next_step)
+
+            self.total_path.append((x_path, y_path))
             
+        return self.total_path
+
+    def draw_path(self):
+        self.path.line(self.total_path, fill='black')
+        self.picture.save('map_with_line.png')
 
 
 if __name__ == "__main__":
@@ -131,5 +139,7 @@ if __name__ == "__main__":
     small = Map('elevation_small.txt')
     example = DrawMap(small)
     example.draw()
-    example.draw_line()
+    # example.draw_line()
+    path = Path(example, 0, 50)
+    path.draw_path()
     # line.draw_line()
