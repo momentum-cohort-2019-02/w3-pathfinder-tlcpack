@@ -55,6 +55,9 @@ class DrawMap:
 
     def __init__(self, map):
         self.map = map
+        self.x_start = 0
+        self.y_start = 0
+        self.total_path = []
         self.picture = Image.new('RGBA', (len(self.map.elevations[0]), len(self.map.elevations)))
         self.drawing = ImageDraw.Draw(self.picture)
 
@@ -64,6 +67,41 @@ class DrawMap:
             for y in range(len(self.map.elevations)):
                 self.picture.putpixel((x, y), (self.map.get_intensity(x, y), self.map.get_intensity(x, y), self.map.get_intensity(x, y)))
         
+    def determine_path(self):
+        
+        x_path = [self.x_start]
+        y_path = [self.y_start]
+        possible_y_path = [self.y_start, self.y_start - 1, self.y_start + 1]
+
+        up_choice = abs(self.map.elevations[self.x_start + 1][possible_y_path[1]] - self.map.elevations[self.x_start][self.y_start])
+        straight_choice = abs(self.map.elevations[self.x_start + 1][possible_y_path[0]] - self.map.elevations[self.x_start][self.y_start])
+        down_choice = abs(self.map.elevations[self.x_start + 1][possible_y_path[2]] - self.map.elevations[self.x_start][self.y_start])
+        diffs = {"up": up_choice, "straight": straight_choice, "down": down_choice}
+        up = diffs["up"]
+        straight = diffs["straight"]
+        down = diffs["down"]
+        next_step = 0
+
+        while x_path < len(self.map.elevations[0]) - 1: # why the '- 1' here?
+            if up < down and up < straight:
+                next_step = possible_y_path[1]
+            elif down < up and down < straight:
+                next_step = possible_y_path[2]
+            elif down == up and down < straight:
+                next_step = possible_y_path[2] # ignoring instruction to randomly choose path, just picking the down path
+            else:
+                next_step = possible_y_path[0]
+            
+            x_path.append(x_path + 1)
+            y_path.append(next_step)
+
+            self.total_path.append((x_path, y_path))
+            print(self.total_path)
+        return self.total_path
+
+    def draw_path(self):
+        self.drawing.line(self.total_path, fill='red')
+        self.picture.save('map_with_line.png')
         
     # def draw_line(self):
     #     """Drawing the line"""
@@ -85,52 +123,52 @@ class DrawMap:
 
 #         self.draw.save('pic_with_line.png')
 
-class Path:
+# class Path:
 
-    def __init__(self, field, x_start, y_start):
-        self.field = field
-        self.x_start = x_start
-        self.y_start = y_start
-        self.total_path = []
-        self.picture = Image.new('RGBA', (len(self.field.elevations[0]), len(self.field.elevations))) 
-        self.path = ImageDraw.Draw(self.picture)
+#     def __init__(self, field, x_start, y_start):
+#         self.field = field
+#         self.x_start = x_start
+#         self.y_start = y_start
+#         self.total_path = []
+#         self.picture = Image.new('RGBA', (len(self.field.elevations[0]), len(self.field.elevations))) 
+#         self.path = ImageDraw.Draw(self.picture)
         
 
-    def determine_path(self):
+#     def determine_path(self):
         
-        x_path = [self.x_start]
-        y_path = [self.y_start]
-        possible_y_path = [self.y_start, self.y_start - 1, self.y_start + 1]
+#         x_path = [self.x_start]
+#         y_path = [self.y_start]
+#         possible_y_path = [self.y_start, self.y_start - 1, self.y_start + 1]
 
-        up_choice = abs(self.field.elevations[self.x_start + 1][possible_y_path[1]] - self.field.elevations[self.x_start][self.y_start])
-        straight_choice = abs(self.field.elevations[self.x_start + 1][possible_y_path[0]] - self.field.elevations[self.x_start][self.y_start])
-        down_choice = abs(self.field.elevations[self.x_start + 1][possible_y_path[2]] - self.field.elevations[self.x_start][self.y_start])
-        diffs = {"up": up_choice, "straight": straight_choice, "down": down_choice}
-        up = diffs["up"]
-        straight = diffs["straight"]
-        down = diffs["down"]
-        next_step = 0
+#         up_choice = abs(self.field.elevations[self.x_start + 1][possible_y_path[1]] - self.field.elevations[self.x_start][self.y_start])
+#         straight_choice = abs(self.field.elevations[self.x_start + 1][possible_y_path[0]] - self.field.elevations[self.x_start][self.y_start])
+#         down_choice = abs(self.field.elevations[self.x_start + 1][possible_y_path[2]] - self.field.elevations[self.x_start][self.y_start])
+#         diffs = {"up": up_choice, "straight": straight_choice, "down": down_choice}
+#         up = diffs["up"]
+#         straight = diffs["straight"]
+#         down = diffs["down"]
+#         next_step = 0
 
-        while x_path < len(self.field.elevations[0]) - 1: # why the '- 1' here?
-            if up < down and up < straight:
-                next_step = possible_y_path[1]
-            elif down < up and down < straight:
-                next_step = possible_y_path[2]
-            elif down == up and down < straight:
-                next_step = possible_y_path[2] # ignoring instruction to randomly choose path, just picking the down path
-            else:
-                next_step = possible_y_path[0]
+#         while x_path < len(self.field.elevations[0]) - 1: # why the '- 1' here?
+#             if up < down and up < straight:
+#                 next_step = possible_y_path[1]
+#             elif down < up and down < straight:
+#                 next_step = possible_y_path[2]
+#             elif down == up and down < straight:
+#                 next_step = possible_y_path[2] # ignoring instruction to randomly choose path, just picking the down path
+#             else:
+#                 next_step = possible_y_path[0]
             
-            x_path.append(x_path + 1)
-            y_path.append(next_step)
+#             x_path.append(x_path + 1)
+#             y_path.append(next_step)
 
-            self.total_path.append((x_path, y_path))
+#             self.total_path.append((x_path, y_path))
             
-        return self.total_path
+#         return self.total_path
 
-    def draw_path(self):
-        self.path.line(self.total_path, fill='black')
-        self.picture.save('map_with_line.png')
+#     def draw_path(self):
+#         self.path.line(self.total_path, fill='black')
+#         self.picture.save('map_with_line.png')
 
 
 if __name__ == "__main__":
@@ -139,7 +177,7 @@ if __name__ == "__main__":
     small = Map('elevation_small.txt')
     example = DrawMap(small)
     example.draw()
-    # example.draw_line()
-    path = Path(example, 0, 50)
-    path.draw_path()
+    example.draw_path()
+    # path = Path(example, 0, 50)
+    # path.draw_path()
     # line.draw_line()
