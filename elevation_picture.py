@@ -85,6 +85,38 @@ class DrawMap:
 
 #         self.draw.save('pic_with_line.png')
 
+class Path:
+
+    def __init__(self, field, x_start, y_start):
+        self.field = field
+        self.x_start = x_start
+        self.y_start = y_start
+        self.picture = Image.new('RGBA', (len(self.field.elevations[0]), len(self.field.elevations))) 
+        self.path = ImageDraw.Draw(self.picture)
+        
+
+    def draw_path(self):
+        total_path = []
+        x_path = [self.x_start]
+        possible_y_path = [self.y_start, self.y_start - 1, self.y_start + 1]
+
+        up_choice = abs(self.field.elevations[self.x_start + 1][possible_y_path[1]] - self.field.elevations[self.x_start][self.y_start])
+        straight_choice = abs(self.field.elevations[self.x_start + 1][possible_y_path[0]] - self.field.elevations[self.x_start][self.y_start])
+        down_choice = abs(self.field.elevations[self.x_start + 1][possible_y_path[2]] - self.field.elevations[self.x_start][self.y_start])
+        diffs = {"up": up_choice, "straight": straight_choice, "down": down_choice}
+        up = diffs["up"]
+        straight = diffs["straight"]
+        down = diffs["down"]
+        next_step = 0
+
+        if up < down and up < straight:
+            next_step = possible_y_path[1]
+        elif down < up and down < straight:
+            next_step = possible_y_path[2]
+        elif down = up and down < straight:
+            next step = possible_y_path[2] # ignoring instruction to randomly choose path, just picking the down path
+        else:
+            next_step = possible_y_path[0]
 
 
 if __name__ == "__main__":
