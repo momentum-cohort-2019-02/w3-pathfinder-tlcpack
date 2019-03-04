@@ -113,7 +113,7 @@ class Path:
             next_step = possible_y_path[1]
         elif down < up and down < straight:
             next_step = possible_y_path[2]
-        elif down = up and down < straight:
+        elif down == up and down < straight:
             next step = possible_y_path[2] # ignoring instruction to randomly choose path, just picking the down path
         else:
             next_step = possible_y_path[0]
